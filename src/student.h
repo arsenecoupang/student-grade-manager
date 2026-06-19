@@ -28,6 +28,7 @@ void update_student(void);
 
 // 통계
 void   calc_average_and_rank(void);
+void show_statistics(void);
 // 유틸
 int next_id(void);
 void clear_input_buffer(void);
