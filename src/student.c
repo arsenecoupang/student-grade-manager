@@ -9,7 +9,7 @@ int student_count = 0;
 
 
 // 유틸리티 함수
-void clear_intput_buffer(void) {
+void clear_input_buffer(void) {
 	int c;
 	while((c = getchar()) != '\n' && c != EOF);
 }
@@ -21,6 +21,15 @@ int next_id(void) {
 		}
 	}
 	return max_id + 1;
+}
+
+int find_by_id(int id) {
+    for (int i = 0; i < student_count; ++i) {
+        if (students[i].id == id) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 
@@ -88,8 +97,7 @@ void add_student(void) {
     }
 
     students[student_count++] = s;
-    cal_average_and_rank();
-    save_to_file();
+    calc_average_and_rank();
 
     printf("[ID %d] %s 학생이 추가되었습니다.\n", s.id, s.name);
 
@@ -98,5 +106,115 @@ void add_student(void) {
 
 // 학생 삭제 함수
 void delete_student(void) {
+    if (student_count == 0) {
+        printf("등록된 학생이 없습니다.\n");
+        return;
+    }
 
+    int id;
+    printf("\n삭제할 학생 ID: ");
+    scanf("%d", &id);
+    clear_input_buffer();
+
+    int idx = find_by_id(id);
+    if (idx == -1) {
+        printf("%d 학생을 찾을 수 없습니다.\n", id);
+        return;
+    }
+
+    printf("%s 학생을 삭제하시겠습니까? (y/n)", students[idx].name);
+    char confirm;
+    scanf("%c", &confirm);
+    clear_input_buffer();
+    if (confirm != 'y') {
+        printf("취소되었습니다.\n");
+        return;
+    }
+
+    for (int i = idx; i < student_count - 1; ++i) {
+        students[i] = students[i + 1];
+    }
+    student_count--;
+
+    calc_average_and_rank();
+    printf("%d 학생이 삭제되었습니다.\n", id);
+}
+
+
+
+//성적 수정 기능
+void update_student(void) {
+    if (student_count == 0) {
+        printf("등록된 학생이 없습니다.\n");
+        return;
+    }
+
+    int id;
+    printf("\n수정할 학생 ID: ");
+    scanf("%d", &id);
+    clear_input_buffer();
+
+    int idx = find_by_id(id);
+    if (idx == -1) {
+        printf("%d 학생을 찾을 수가 없습니다.\n", id);
+        return;
+    }
+
+    printf("── [%s] 성적 수정 (현재: 국어 %d / 영어 %d / 수학 %d) ──\n",
+           students[idx].name,
+           students[idx].korean, students[idx].english, students[idx].math);
+
+    printf("새 국어 점수 : "); scanf("%d", &students[idx].korean); clear_input_buffer();
+    printf("새 영어 점수 : "); scanf("%d", &students[idx].english); clear_input_buffer();
+    printf("새 수학 점수 : "); scanf("%d", &students[idx].math); clear_input_buffer();
+
+    calc_average_and_rank();
+    printf("성적이 수정되었습니다.\n");
+}
+
+void show_statistics(void) {
+    double sum_kor = 0, sum_eng = 0, sum_mat = 0, sum_avg = 0;
+    double max_avg = -1, min_avg = 101;
+    int best_idx = 0, worst_idx = 0;
+
+    for (int i = 0; i < student_count; ++i) {
+        sum_kor += students[i].korean;
+        sum_eng += students[i].english;
+        sum_mat += students[i].math;
+        sum_avg += students[i].average;
+        if (students[i].average > max_avg) {
+            max_avg = students[i].average;
+            best_idx = i;
+        }
+        if (students[i].average < min_avg) {
+            min_avg = students[i].average;
+            worst_idx = i;
+        }
+    }
+
+    int n = student_count;
+    printf("\n── 통계 (%d명) ──\n", n);
+    printf("  과목 평균  : 국어 %.1f  /  영어 %.1f  /  수학 %.1f\n",
+           sum_kor / n, sum_eng / n, sum_mat / n);
+    printf("  전체 평균  : %.1f\n", sum_avg / n);
+    printf("  최고 점수  : %s (%.1f)\n",
+           students[best_idx].name, students[best_idx].average);
+    printf("  최저 점수  : %s (%.1f)\n",
+           students[worst_idx].name, students[worst_idx].average);
+
+    int grades[5] = {0};
+    for (int i = 0; i < student_count; i++) {
+        double avg = students[i].average;
+        if      (avg >= 90) grades[0]++;
+        else if (avg >= 80) grades[1]++;
+        else if (avg >= 70) grades[2]++;
+        else if (avg >= 60) grades[3]++;
+        else                grades[4]++;
+    }
+    printf("\n  등급 분포\n");
+    printf("  A(90~) : %d명\n", grades[0]);
+    printf("  B(80~) : %d명\n", grades[1]);
+    printf("  C(70~) : %d명\n", grades[2]);
+    printf("  D(60~) : %d명\n", grades[3]);
+    printf("  F(~59) : %d명\n", grades[4]);
 }

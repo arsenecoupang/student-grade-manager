@@ -21,8 +21,15 @@ extern int student_count;
 // 함수 선언
 void print_menu(void);
 
+void add_student(void);
+void delete_student(void);
+void update_student(void);
+
+
+// 통계
+void   calc_average_and_rank(void);
 // 유틸
-int nex_id(void);
+int next_id(void);
 void clear_input_buffer(void);
 
 #endif
