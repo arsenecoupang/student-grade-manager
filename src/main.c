@@ -6,6 +6,9 @@
 #pragma comment(lib, "Rpcrt4.lib")
 
 int main() {
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+
 	int choice;
 
     while (1) {
@@ -18,11 +21,14 @@ int main() {
             case 2: delete_student(); break;
             case 3: update_student(); break;
             case 4: show_statistics(); break;
+            case 5: list_students();  continue;
             case 0:
                 printf("프로그램을 종료합니다.\n");
                 return 0;
             default:
                 printf("올바른 메뉴 번호를 입력하세요.\n");
         }
+        printf("\n계속하려면 Enter를 누르세요...");
+        getchar();
     }
 }

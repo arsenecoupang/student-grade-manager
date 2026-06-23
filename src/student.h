@@ -24,11 +24,12 @@ void print_menu(void);
 void add_student(void);
 void delete_student(void);
 void update_student(void);
-
+void list_students(void);
 
 // 통계
-void   calc_average_and_rank(void);
+void calc_average_and_rank(void);
 void show_statistics(void);
+
 // 유틸
 int next_id(void);
 void clear_input_buffer(void);

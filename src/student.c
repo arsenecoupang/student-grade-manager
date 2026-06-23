@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <rpc.h>
 #include <windows.h>
 #include "student.h"
@@ -55,22 +56,47 @@ void calc_average_and_rank(void) {
 
 // 메뉴 출력
 void print_menu(void) {
+	system("cls");
 	printf("\n╔══════════════════════════════╗\n");
     printf("║   학생 성적 관리 시스템       ║\n");
     printf("╠══════════════════════════════╣\n");
     printf("║  1. 학생 추가                ║\n");
     printf("║  2. 학생 삭제                ║\n");
     printf("║  3. 성적 수정                ║\n");
-    printf("║  4. 전체 목록 보기           ║\n");
-    printf("║  5. 이름으로 검색            ║\n");
-    printf("║  6. 통계 보기                ║\n");
-    printf("║  7. 저장                     ║\n");
+    printf("║  4. 통계 보기                ║\n");
+    printf("║  5. 전체 목록 보기            ║\n");
     printf("║  0. 종료                     ║\n");
     printf("╚══════════════════════════════╝\n");
     printf("선택 > ");
 }
 
 
+
+
+// 전체 목록 출력
+void list_students(void) {
+    if (student_count == 0) {
+        printf("등록된 학생이 없습니다.\n");
+        printf("\n계속하려면 Enter를 누르세요...");
+        getchar();
+        return;
+    }
+
+    printf("\n── 전체 학생 목록 (%d명) ──\n", student_count);
+    printf("┌─────┬────────────┬──────┬──────┬──────┬────────┬──────┐\n");
+    printf("│ ID  │    이름    │ 국어 │ 영어 │ 수학 │  평균  │ 등수 │\n");
+    printf("├─────┼────────────┼──────┼──────┼──────┼────────┼──────┤\n");
+    for (int i = 0; i < student_count; ++i) {
+        printf("│ %3d │ %-10s │ %4d │ %4d │ %4d │ %6.1f │ %4d │\n",
+               students[i].id, students[i].name,
+               students[i].korean, students[i].english, students[i].math,
+               students[i].average, students[i].rank);
+    }
+    printf("└─────┴────────────┴──────┴──────┴──────┴────────┴──────┘\n");
+
+    printf("\n계속하려면 Enter를 누르세요...");
+    getchar();
+}
 
 
 // 학생 추가 함수
@@ -173,6 +199,10 @@ void update_student(void) {
 }
 
 void show_statistics(void) {
+    if (student_count == 0) {
+        printf("등록된 학생이 없습니다.\n");
+        return;
+    }
     double sum_kor = 0, sum_eng = 0, sum_mat = 0, sum_avg = 0;
     double max_avg = -1, min_avg = 101;
     int best_idx = 0, worst_idx = 0;
