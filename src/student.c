@@ -14,6 +14,8 @@ void clear_input_buffer(void) {
 	int c;
 	while((c = getchar()) != '\n' && c != EOF);
 }
+
+
 int next_id(void) {
 	int max_id = 0;
 	for (int i = 0; i < student_count; ++i) {
@@ -58,13 +60,13 @@ void calc_average_and_rank(void) {
 void print_menu(void) {
 	system("cls");
 	printf("\n╔══════════════════════════════╗\n");
-    printf("║   학생 성적 관리 시스템       ║\n");
+    printf("║   학생 성적 관리 시스템      ║\n");
     printf("╠══════════════════════════════╣\n");
     printf("║  1. 학생 추가                ║\n");
     printf("║  2. 학생 삭제                ║\n");
     printf("║  3. 성적 수정                ║\n");
     printf("║  4. 통계 보기                ║\n");
-    printf("║  5. 전체 목록 보기            ║\n");
+    printf("║  5. 전체 목록 보기           ║\n");
     printf("║  0. 종료                     ║\n");
     printf("╚══════════════════════════════╝\n");
     printf("선택 > ");
@@ -87,8 +89,17 @@ void list_students(void) {
     printf("│ ID  │    이름    │ 국어 │ 영어 │ 수학 │  평균  │ 등수 │\n");
     printf("├─────┼────────────┼──────┼──────┼──────┼────────┼──────┤\n");
     for (int i = 0; i < student_count; ++i) {
-        printf("│ %3d │ %-10s │ %4d │ %4d │ %4d │ %6.1f │ %4d │\n",
-               students[i].id, students[i].name,
+        // 한글 표시 너비 계산: ASCII는 1칸, 한글(0xC0 이상)은 2칸
+        int w = 0;
+        for (int j = 0; students[i].name[j]; j++) {
+            unsigned char c = students[i].name[j];
+            if (c < 0x80) w++;
+            else if (c >= 0xC0) w += 2;
+        }
+        int pad = 10 - w;
+        if (pad < 0) pad = 0;
+        printf("│ %3d │ %s%*s │ %4d │ %4d │ %4d │ %6.1f │ %4d │\n",
+               students[i].id, students[i].name, pad, "",
                students[i].korean, students[i].english, students[i].math,
                students[i].average, students[i].rank);
     }
